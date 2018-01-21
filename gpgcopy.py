@@ -11,7 +11,7 @@ import sys
 @click.argument('src', type=click.Path(exists=True, file_okay=False))
 @click.argument('dest', type=click.Path(exists=True, file_okay=False))
 @click.option('--recipient', '-r', multiple=True, required=True)
-def gpgcopy(src, dest, recipient):
+def copy_files(src, dest, recipient):
     src = Path(src)
     dest = Path(dest)
 
@@ -50,4 +50,4 @@ def gpgcopy(src, dest, recipient):
 
 
 if __name__ == '__main__':
-    gpgcopy()
+    copy_files()
