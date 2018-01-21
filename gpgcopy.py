@@ -42,7 +42,7 @@ def copy_files(src, dest, recipient):
 
             recipient_args = itertools.chain.from_iterable(('-r', r) for r in recipient)
             try:
-                params = ['gpg', '--batch', '--always-trust', '--yes', '-e', '-o', dstfile, *recipient_args, srcfile]
+                params = ['gpg', '--batch', '--always-trust', '--yes', '-e', '-o', str(dstfile), *recipient_args, str(srcfile)]
                 subprocess.run(params, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
             except subprocess.CalledProcessError as exc:
                 click.echo(click.style('\n{}\n{}'.format(exc, exc.stderr.decode('utf-8', errors='ignore')), fg='red', bold=True), err=True)
