@@ -21,13 +21,10 @@ def copy_files(src, dest, recipient):
         except subprocess.CalledProcessError:
             raise click.UsageError('Non-existent recipient: {}. Please import the key first.'.format(r))
 
-    total_length = sum(1 for item in src.rglob('*'))
+    total_length = sum(1 for srcfile in src.rglob('*') if srcfile.is_file())
 
-    with click.progressbar(src.rglob('*'), length=total_length, show_pos=True, bar_template='[%(bar)s]  %(info)s  %(label)s') as bar:
+    with click.progressbar((i for i in src.rglob('*') if i.is_file()), length=total_length, show_pos=True, bar_template='[%(bar)s]  %(info)s  %(label)s') as bar:
         for srcfile in bar:
-            if not srcfile.is_file():
-                continue
-
             rel = srcfile.relative_to(src)
             bar.label = rel
 
@@ -36,8 +33,8 @@ def copy_files(src, dest, recipient):
 
             dstfile = (dest / rel).with_suffix(srcfile.suffix + '.gpg')
 
-            # do not overwrite existing files which are larger or same as src file
-            if dstfile.exists() and dstfile.stat().st_size >= srcfile.stat().st_size:
+            # do not overwrite existing files
+            if dstfile.exists() and dstfile.stat().st_size:
                 continue
 
             recipient_args = itertools.chain.from_iterable(('-r', r) for r in recipient)
